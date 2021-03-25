@@ -12,7 +12,11 @@ class CadastraAutorController {
 
     @Post
     fun cadastra(@Body @Valid request: CadastraAutorRequest) {
-        println(request)
+        println("Requisicao -> ${request}")
+
+        val autor: Autor = request.paraAutor()
+
+        println("Autor -> ${autor.nome}")
     }
 
 }
