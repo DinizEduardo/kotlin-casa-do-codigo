@@ -1,5 +1,6 @@
 package br.com.zup.autores
 
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
@@ -10,13 +11,18 @@ import javax.validation.Valid
 @Validated
 @Controller("/autores")
 @Transactional
-class CadastraAutorController(val autorRepository: AutorRepository) {
+class CadastraAutorController(val autorRepository: AutorRepository,
+                              val enderecoClient: EndrecoClient) {
 
     @Post
     fun cadastra(@Body @Valid request: CadastraAutorRequest) {
         println("Requisicao -> ${request}")
 
-        val autor: Autor = request.paraAutor()
+        // fazer uma req para um servico externo
+
+        val enderecoResponse: HttpResponse<EnderecoResponse> = enderecoClient.consulta(request.cep)
+
+        val autor: Autor = request.paraAutor(enderecoResponse.body()!!)
         autorRepository.save(autor)
 
         println("Autor -> ${autor.nome}")
